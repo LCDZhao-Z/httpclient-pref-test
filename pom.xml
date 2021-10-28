@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.oppo.perfhttpclient</groupId>
+    <artifactId>perfhttpclient</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <repositories>
+        <repository>
+            <id>nexus</id>
+            <url>http://nexus.os.adc.com/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus-release</id>
+            <url>http://nexus.os.adc.com/nexus/content/repositories/releases/
+            </url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-snapshots</id>
+            <url>
+                http://nexus.os.adc.com/nexus/content/repositories/snapshots/
+            </url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <properties>
+        <io.esastack.commons.version>0.1.1</io.esastack.commons.version>
+        <commons.io.version>2.4</commons.io.version>
+        <slf4j.version>1.7.7</slf4j.version>
+        <netty.version>4.1.52.Final</netty.version>
+        <netty-tcnative.version>2.0.34.Final</netty-tcnative.version>
+        <jzlib.version>1.1.3</jzlib.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>esa</groupId>
+            <artifactId>httpclient-core</artifactId>
+            <version>2.0.0-BUILD17-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oppo.test.platform</groupId>
+            <artifactId>platform-util</artifactId>
+            <version>1.5.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-epoll</artifactId>
+            <classifier>linux-x86_64</classifier>
+            <version>${netty.version}</version>
+        </dependency>
+
+        <!-- apache commons -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.io.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--Netty NIO Framework -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-tcnative-boringssl-static</artifactId>
+            <version>${netty-tcnative.version}</version>
+        </dependency>
+
+        <!--netty decompressor,used by netty-->
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jzlib</artifactId>
+            <version>${jzlib.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <!-- log -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.14.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>esa-httpclient</finalName>
+        <plugins>
+            <!-- compiler插件参数设置，指定编码 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>utf-8</encoding>
+                </configuration>
+            </plugin>
+
+            <!--   这个插件是关键   -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+
+                    <archive>
+                        <manifest>
+                            <!--指定入口-->
+                            <mainClass>com.oppo.perfhttpclient.post.run</mainClass>
+                            <useUniqueVersions>false</useUniqueVersions>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                        <manifestEntries>
+                            <Class-Path>.</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                    <!--   这个是assembly 所在位置  -->
+                    <descriptorRefs>
+
+                        <!--指定包名-->
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+
+                <!--过滤掉不需要包含的文件-->
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
