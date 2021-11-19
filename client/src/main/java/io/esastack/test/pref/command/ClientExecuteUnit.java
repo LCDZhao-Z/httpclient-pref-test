@@ -4,18 +4,29 @@ import com.oppo.test.platform.util.stat.Monitor;
 import com.oppo.test.platform.util.stat.Stat;
 import com.oppo.test.platform.util.thread.ExecuteUnit;
 import esa.commons.Checks;
+import esa.commons.logging.Logger;
+import io.esastack.httpclient.core.Response;
+import io.esastack.httpclient.core.util.LoggerUtils;
+
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class ClientExecuteUnit implements ExecuteUnit {
 
-    private Monitor monitor;
+    private static final Logger logger = LoggerUtils.logger();
+    private volatile Monitor monitor;
     private final String url;
-    private final String bodyString;
+    private final byte[] body;
+    private final AtomicInteger count = new AtomicInteger();
+    private final int countPeriod;
 
-    protected ClientExecuteUnit(String url, String bodyString) {
+    protected ClientExecuteUnit(String url, String bodyString, int countPeriod) {
         Checks.checkNotNull(url, "url");
         Checks.checkNotNull(bodyString, "bodyString");
+        this.countPeriod = countPeriod;
         this.url = url;
-        this.bodyString = bodyString;
+        this.body = bodyString.getBytes(StandardCharsets.UTF_8);
     }
 
     public void setMonitor(Monitor monitor) {
@@ -27,13 +38,37 @@ public abstract class ClientExecuteUnit implements ExecuteUnit {
     }
 
     public void run() {
-        Stat stat = new Stat();
+        final Stat stat = new Stat();
         stat.start();
-        stat.setSuccess(doRequest(url, bodyString));
-        stat.end();
-        monitor.add(stat);
+        if (count.addAndGet(1) < countPeriod) {
+            doRequest(url, body).whenComplete((response, ex) -> {
+                try {
+                    if (ex != null) {
+                        logger.error("Error occur!response:{}", response, ex);
+                        stat.setSuccess(false);
+                    } else {
+                        stat.setSuccess(response.status() == 200);
+                    }
+                } finally {
+                    stat.end();
+                    monitor.add(stat);
+                }
+            });
+        } else {
+            count.set(0);
+            CompletionStage<? extends Response> responseFuture = doRequest(url, body);
+            try {
+                Response response = responseFuture.toCompletableFuture().get();
+                stat.setSuccess(response.status() == 200);
+            } catch (Exception e) {
+                stat.setSuccess(false);
+                logger.error("Error occur!", e);
+            }
+            stat.end();
+            monitor.add(stat);
+        }
     }
 
-    abstract public boolean doRequest(String url, String bodyString);
+    abstract public CompletionStage<? extends Response> doRequest(String url, byte[] body);
 
 }

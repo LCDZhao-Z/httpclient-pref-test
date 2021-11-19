@@ -35,18 +35,20 @@ fi
 
 
 JAVA_OPTS="-Djava.io.tmpdir=$base/tmp -DappName=${appName} -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom"
-JAVA_OPTS_MEM_AND_GC="-Xms1024m -Xmx1024m -Dio.netty.leakDetection.level=paraniod -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m -Xloggc:logs/gc-${appName}.log -XX:+UseConcMarkSweepGC -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 -XX:+PrintTenuringDistribution -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=200M -XX:+HeapDumpAfterFullGC -XX:+HeapDumpBeforeFullGC -XX:HeapDumpPath=logs/dumpfile-${appName}"
+JAVA_OPTS_MEM_AND_GC="-Xms1024m -Xmx1024m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m -XX:+UseConcMarkSweepGC -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70"
 TYPE=$1
 URL=$2
 THREAD_NUM=$3
 RUN_TIME=$4
 BODY_STRING=$5
+COUNT_PERIOD=$6
+CONNECTTIN_POOL_SIZE=$7
 
 cd $base
 if [ ! -d "logs" ]; then
   mkdir logs
 fi
-java $JAVA_OPTS $JAVA_OPTS_MEM_AND_GC -classpath 'lib/*:conf' io.esastack.ClientApplication $TYPE $URL $THREAD_NUM $RUN_TIME $BODY_STRING 1>>logs/server.log 2>&1 &
+java $JAVA_OPTS $JAVA_OPTS_MEM_AND_GC -classpath 'lib/*:conf' io.esastack.ClientApplication $TYPE $URL $THREAD_NUM $RUN_TIME $BODY_STRING $COUNT_PERIOD $CONNECTTIN_POOL_SIZE 1>>logs/server.log 2>&1 &
 
 echo $! > $base/server.pid
 
