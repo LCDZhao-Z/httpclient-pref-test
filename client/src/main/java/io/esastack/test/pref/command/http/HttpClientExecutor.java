@@ -1,7 +1,6 @@
 package io.esastack.test.pref.command.http;
 
 import io.esastack.httpclient.core.HttpClient;
-import io.esastack.httpclient.core.HttpResponse;
 import io.esastack.test.pref.command.ClientExecuteUnit;
 
 import java.util.concurrent.CompletionStage;
@@ -10,7 +9,7 @@ public class HttpClientExecutor extends ClientExecuteUnit {
 
     private final HttpClient client;
 
-    public HttpClientExecutor(String url, String bodyString, int countCount,int connectionPoolSize) {
+    public HttpClientExecutor(String url, String bodyString, int countCount, int connectionPoolSize) {
         super(url, bodyString, countCount);
         System.setProperty("io.esastack.httpclient.ioThreads", "6");
         this.client = HttpClient.create()
@@ -22,9 +21,10 @@ public class HttpClientExecutor extends ClientExecuteUnit {
     }
 
     @Override
-    public CompletionStage<HttpResponse> doRequest(String url, byte[] body) {
+    public CompletionStage<Boolean> doRequest(String url, byte[] body) {
         return client.post(url)
                 .body(body)
-                .execute();
+                .execute()
+                .thenApply(httpResponse -> httpResponse.status() == 200);
     }
 }

@@ -1,7 +1,6 @@
 package io.esastack.test.pref.command.rest;
 
 import io.esastack.restclient.RestClient;
-import io.esastack.restclient.RestResponseBase;
 import io.esastack.test.pref.command.ClientExecuteUnit;
 
 import java.util.concurrent.CompletionStage;
@@ -10,7 +9,7 @@ public class RestClientExecutor extends ClientExecuteUnit {
 
     private final RestClient client;
 
-    public RestClientExecutor(String url, String bodyString, int countCount,int connectionPoolSize) {
+    public RestClientExecutor(String url, String bodyString, int countCount, int connectionPoolSize) {
         super(url, bodyString, countCount);
         System.setProperty("io.esastack.httpclient.ioThreads", "6");
         this.client = RestClient.create()
@@ -21,9 +20,10 @@ public class RestClientExecutor extends ClientExecuteUnit {
     }
 
     @Override
-    public CompletionStage<RestResponseBase> doRequest(String url, byte[] body) {
+    public CompletionStage<Boolean> doRequest(String url, byte[] body) {
         return client.post(url)
                 .entity(body)
-                .execute();
+                .execute()
+                .thenApply(restResponseBase -> restResponseBase.status() == 200);
     }
 }

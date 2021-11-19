@@ -5,7 +5,6 @@ import com.oppo.test.platform.util.stat.Stat;
 import com.oppo.test.platform.util.thread.ExecuteUnit;
 import esa.commons.Checks;
 import esa.commons.logging.Logger;
-import io.esastack.httpclient.core.Response;
 import io.esastack.httpclient.core.util.LoggerUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -41,13 +40,13 @@ public abstract class ClientExecuteUnit implements ExecuteUnit {
         final Stat stat = new Stat();
         stat.start();
         if (count.addAndGet(1) < countPeriod) {
-            doRequest(url, body).whenComplete((response, ex) -> {
+            doRequest(url, body).whenComplete((isResponseSuccess, ex) -> {
                 try {
                     if (ex != null) {
-                        logger.error("Error occur!response:{}", response, ex);
+                        logger.error("Error occur!response:{}", isResponseSuccess, ex);
                         stat.setSuccess(false);
                     } else {
-                        stat.setSuccess(response.status() == 200);
+                        stat.setSuccess(isResponseSuccess);
                     }
                 } finally {
                     stat.end();
@@ -56,10 +55,9 @@ public abstract class ClientExecuteUnit implements ExecuteUnit {
             });
         } else {
             count.set(0);
-            CompletionStage<? extends Response> responseFuture = doRequest(url, body);
+            CompletionStage<Boolean> responseFuture = doRequest(url, body);
             try {
-                Response response = responseFuture.toCompletableFuture().get();
-                stat.setSuccess(response.status() == 200);
+                stat.setSuccess(responseFuture.toCompletableFuture().get());
             } catch (Exception e) {
                 stat.setSuccess(false);
                 logger.error("Error occur!", e);
@@ -69,6 +67,6 @@ public abstract class ClientExecuteUnit implements ExecuteUnit {
         }
     }
 
-    abstract public CompletionStage<? extends Response> doRequest(String url, byte[] body);
+    abstract public CompletionStage<Boolean> doRequest(String url, byte[] body);
 
 }
