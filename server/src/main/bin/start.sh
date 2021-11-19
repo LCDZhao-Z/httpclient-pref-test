@@ -34,7 +34,7 @@ if [ ! "$pid" = "" ]; then
 fi
 
 JAVA_OPTS="-Djava.io.tmpdir=$base/tmp -DappName=${appName} -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom"
-JAVA_OPTS_MEM_AND_GC="-Xms1024m -Xmx1024m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m -Xloggc:logs/gc-${appName}.log -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=70"
+JAVA_OPTS_MEM_AND_GC="-Xms1024m -Xmx1024m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=70"
 SPRING_CONF="-Dspring.config.location=conf/Application.properties"
 PORT=$1
 
