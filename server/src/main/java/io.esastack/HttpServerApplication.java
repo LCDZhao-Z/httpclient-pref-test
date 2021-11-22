@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class HttpServerApplication {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException {
         int port = 8888;
         if (args.length > 0) {
             String portString = args[0];
@@ -28,7 +28,7 @@ public class HttpServerApplication {
                         req.onData(data ->
                                 req.response().end(data.retain())));
         server.listen(port);
-        System.in.read();
+        server.await();
     }
 
 }
