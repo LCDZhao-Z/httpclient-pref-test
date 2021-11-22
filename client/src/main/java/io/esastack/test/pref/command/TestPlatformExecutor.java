@@ -6,7 +6,10 @@ import com.oppo.test.platform.util.thread.ExecuteParam;
 import com.oppo.test.platform.util.thread.MultiThread;
 import esa.commons.logging.Logger;
 import io.esastack.httpclient.core.util.LoggerUtils;
+import io.esastack.test.pref.command.apache.ApacheClientExecutor;
+import io.esastack.test.pref.command.async.AsyncHttpClientExecutor;
 import io.esastack.test.pref.command.http.HttpClientExecutor;
+import io.esastack.test.pref.command.ok.OKHttpClientExecutor;
 import io.esastack.test.pref.command.rest.RestClientExecutor;
 import io.esastack.test.pref.util.Constants;
 import org.apache.commons.cli.CommandLine;
@@ -42,6 +45,12 @@ public class TestPlatformExecutor implements Executor {
             executeUnit = new RestClientExecutor(url, bodyString, countCount, connectionPoolSize);
         } else if (Constants.Type.HTTP.equals(type)) {
             executeUnit = new HttpClientExecutor(url, bodyString, countCount, connectionPoolSize);
+        } else if (Constants.Type.APACHE.equals(type)) {
+            executeUnit = new ApacheClientExecutor(url, bodyString, countCount, connectionPoolSize);
+        } else if (Constants.Type.ASYNC_HTTP.equals(type)) {
+            executeUnit = new AsyncHttpClientExecutor(url, bodyString, countCount, connectionPoolSize);
+        } else if (Constants.Type.OK.equals(type)) {
+            executeUnit = new OKHttpClientExecutor(url, bodyString, countCount, connectionPoolSize);
         } else {
             throw new UnsupportedOperationException("Unknown type : " + type);
         }

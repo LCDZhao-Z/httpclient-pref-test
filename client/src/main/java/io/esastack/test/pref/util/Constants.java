@@ -9,6 +9,9 @@ public final class Constants {
     public static final class Type {
         public static final String HTTP = "HTTP";
         public static final String REST = "REST";
+        public static final String APACHE = "APACHE";
+        public static final String ASYNC_HTTP = "ASYNC_HTTP";
+        public static final String OK = "OK";
     }
 
     public static final class Command {

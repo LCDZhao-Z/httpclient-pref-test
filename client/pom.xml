@@ -13,6 +13,9 @@
 
     <properties>
         <esa-client.version>0.1.1-SNAPSHOT</esa-client.version>
+        <apache-client.version>5.1.2</apache-client.version>
+        <async-http-client.version>2.12.3</async-http-client.version>
+        <ok-http-client.version>4.9.2</ok-http-client.version>
         <platform-util.version>1.5.2-SNAPSHOT</platform-util.version>
     </properties>
 
@@ -33,6 +36,24 @@
             <groupId>com.oppo.test.platform</groupId>
             <artifactId>platform-util</artifactId>
             <version>${platform-util.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${apache-client.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.asynchttpclient</groupId>
+            <artifactId>async-http-client</artifactId>
+            <version>${async-http-client.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${ok-http-client.version}</version>
         </dependency>
     </dependencies>
     <build>
