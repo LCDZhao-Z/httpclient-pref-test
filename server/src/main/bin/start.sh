@@ -37,12 +37,13 @@ JAVA_OPTS="-Djava.io.tmpdir=$base/tmp -DappName=${appName} -Djava.awt.headless=t
 JAVA_OPTS_MEM_AND_GC="-Xms1024m -Xmx1024m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=70"
 SPRING_CONF="-Dspring.config.location=conf/Application.properties"
 PORT=$1
+THREAD_NUM=$2
 
 cd $base
 if [ ! -d "logs" ]; then
   mkdir logs
 fi
-java $SPRING_CONF $JAVA_OPTS $JAVA_OPTS_MEM $JAVA_OPTS_CMS $JAVA_OPTS_GC -classpath 'lib/*:conf' io.esastack.RestLightApplication $PORT 1>>logs/server.log 2>&1 &
+java $SPRING_CONF $JAVA_OPTS $JAVA_OPTS_MEM $JAVA_OPTS_CMS $JAVA_OPTS_GC -classpath 'lib/*:conf' io.esastack.RestLightApplication $PORT $THREAD_NUM 1>>logs/server.log 2>&1 &
 
 echo $! > $base/server.pid
 
