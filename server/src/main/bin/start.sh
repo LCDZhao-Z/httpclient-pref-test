@@ -43,7 +43,7 @@ cd $base
 if [ ! -d "logs" ]; then
   mkdir logs
 fi
-java $SPRING_CONF $JAVA_OPTS $JAVA_OPTS_MEM $JAVA_OPTS_CMS $JAVA_OPTS_GC -classpath 'lib/*:conf' io.esastack.RestLightApplication $PORT $THREAD_NUM 1>>logs/server.log 2>&1 &
+java $SPRING_CONF $JAVA_OPTS $JAVA_OPTS_MEM $JAVA_OPTS_CMS $JAVA_OPTS_GC -classpath 'lib/*:conf' io.esastack.HttpServerApplication $PORT $THREAD_NUM 1>>logs/server.log 2>&1 &
 
 echo $! > $base/server.pid
 
